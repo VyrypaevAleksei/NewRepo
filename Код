@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+#include <cmath>
+
+using namespace std;
+
+bool проверка_цвета(int k, int l, int m, int n) {
+    return ((k + l) % 2 == (m + n) % 2);
+}
+
+bool isThreatened(int k, int l, int m, int n, char piece) {
+    int dx = abs(k - m);
+    int dy = abs(l - n);
+
+    if (piece == 'Q') { 
+        return (k == m || l == n || dx == dy);
+    }
+    else if (piece == 'R') { 
+        return (k == m || l == n);
+    }
+    else if (piece == 'B') { 
+        return dx == dy;
+    }
+    else if (piece == 'N') { 
+        return (dx == 2 && dy == 1) || (dx == 1 && dy == 2);
+    }
+    return false; 
+}
+
+int main() {
+    int k, l, m, n;
+    char piece;
+    setlocale(LC_ALL, "Russian");
+    cout << "Введите координаты первого поля (k, l): ";
+    cin >> k >> l;
+    cout << "Введите координаты второго поля (m, n): ";
+    cin >> m >> n;
+
+    cout << "Являются ли поля (k, l) и поля (m, n) одного цвета: "
+        << (проверка_цвета(k, l, m, n) ? "Да" : "Нет") << endl;
+
+    cout << "Введите тип фигуры (Q - ферзь, R - Ладья, B - слон, N - конь) на поле (k, l): ";
+    cin >> piece;
+
+    cout << "Угрожает ли фигура на поле (k, l) полю (m, n)?: "
+        << (isThreatened(k, l, m, n, piece) ? "Да" : "Нет") << endl;
+
+    cout << "Введите тип элемента, который мог бы попасть в поле (m, n) из поля (k, l): ";
+    cin >> piece;
+
+    if (isThreatened(k, l, m, n, piece)) {
+        cout << "Фигура может достичь поля (m, n) с поля (k, l) за один ход.\n";
+    }
+    else {
+
+        for (int r = 0; r < 8; ++r) {
+            for (int c = 0; c < 8; ++c) {
+                if (isThreatened(k, l, r + 1, c + 1, piece) && isThreatened(r + 1, c + 1, m, n, piece)) {
+                    cout << "Фигура может достичь поля (m, n) с поля (k, l) за два хода по полю ("
+                        << r + 1 << ", " << c + 1 << ").\n";
+                    return 0;
+                }
+            }
+        }
+        cout << "Фигура не может достичь поля (m, n) с поля (k, l) за два хода.\n";
+    }
+    return 0;
+}
